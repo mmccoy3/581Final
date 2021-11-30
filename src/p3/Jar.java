@@ -106,16 +106,16 @@ public class Jar {
             Vector<Resource> resources = new Vector<Resource>();
             if (!doFilesonly) {
                 String[] directories = rs.getIncludedDirectories();
-                for (int j = 0; j < directories.length; j++) {
-                    if (!"".equals(directories[j]) || !skipEmptyNames) {
-                        resources.addElement(rs.getResource(directories[j]));
+                for (String directory : directories) {
+                    if (!"".equals(directory) || !skipEmptyNames) {
+                        resources.addElement(rs.getResource(directory));
                     }
                 }
             }
             String[] files = rs.getIncludedFiles();
-            for (int j = 0; j < files.length; j++) {
-                if (!"".equals(files[j]) || !skipEmptyNames) {
-                    resources.addElement(rs.getResource(files[j]));
+            for (String file : files) {
+                if (!"".equals(file) || !skipEmptyNames) {
+                    resources.addElement(rs.getResource(file));
                 }
             }
 

@@ -30,13 +30,13 @@ public class UndoManager {
 	/**
 	 * Collection of undo activities
 	 */
-	private Vector<Undoable> redoStack;
+	private Stack<Undoable> redoStack;
 		
 	/**
 	 * Collection of undo activities
 	 */
-	private Vector<Undoable> undoStack;
-	private int maxStackCapacity;
+	private Stack<Undoable> undoStack;
+	private final int maxStackCapacity;
 	
 	public UndoManager() {
 		this(DEFAULT_BUFFER_SIZE);
@@ -44,23 +44,27 @@ public class UndoManager {
 
 	public UndoManager(int newUndoStackSize) {
 		maxStackCapacity = newUndoStackSize;
-		undoStack = new Vector<Undoable>(maxStackCapacity);
-		redoStack = new Vector<Undoable>(maxStackCapacity);
+		undoStack = new Stack<Undoable>();
+		redoStack = new Stack<Undoable>();
+	}
+	
+	public int getStackSize() {
+		return this.maxStackCapacity;
 	}
 
 	public void pushUndo(Undoable undoActivity) {
 		if (undoActivity.isUndoable()) {
 			// If buffersize exceeds, remove the oldest command
 			if (getUndoSize() >= maxStackCapacity) {
-				undoStack.removeElementAt(0);
+				undoStack.remove(0);
 			}
-			undoStack.addElement(undoActivity);
+			undoStack.push(undoActivity);
 		}
 		else {
 			// a not undoable activity clears the stack because
 			// the last activity does not correspond with the
 			// last undo activity
-			undoStack = new Vector<Undoable>(maxStackCapacity);
+			undoStack = new Stack<Undoable>();
 		}
 	}
 
@@ -68,25 +72,25 @@ public class UndoManager {
 		if (redoActivity.isRedoable()) {
 			// If buffersize exceeds, remove the oldest command
 			if (getRedoSize() >= maxStackCapacity) {
-				redoStack.removeElementAt(0);
+				redoStack.remove(0);
 			}
 			// add redo activity only if it is not already the last
 			// one in the buffer
 			if ((getRedoSize() == 0) || (peekRedo() != redoActivity)) {
-				redoStack.addElement(redoActivity);
+				redoStack.push(redoActivity);
 			}
 		}
 		else {
 			// a not undoable activity clears the tack because
 			// the last activity does not correspond with the
 			// last undo activity
-			redoStack = new Vector<Undoable>(maxStackCapacity);
+			redoStack = new Stack<Undoable>();
 		}
 	}
 
 	public boolean isUndoable() {
 		if (getUndoSize() > 0) {
-			return ((Undoable)undoStack.lastElement()).isUndoable();
+			return undoStack.peek().isUndoable();
 		}
 		else {
 			return false;
@@ -95,7 +99,7 @@ public class UndoManager {
 	
 	public boolean isRedoable() {
 		if (getRedoSize() > 0) {
-			return ((Undoable)redoStack.lastElement()).isRedoable();
+			return redoStack.peek().isRedoable();
 		}
 		else {
 			return false;
@@ -104,7 +108,7 @@ public class UndoManager {
 
 	protected Undoable peekUndo() {
 		if (getUndoSize() > 0) {
-			return (Undoable) undoStack.lastElement();
+			return undoStack.peek();
 		}
 		else {
 			return null;
@@ -113,7 +117,7 @@ public class UndoManager {
 
 	protected Undoable peekRedo() {
 		if (getRedoSize() > 0) {
-			return (Undoable) redoStack.lastElement();
+			return redoStack.peek();
 		}
 		else {
 			return null;
@@ -139,12 +143,13 @@ public class UndoManager {
 	 */
 	public Undoable popUndo() {
 		// Get the last element - throw NoSuchElementException if there is none
-		Undoable lastUndoable = peekUndo();
-
 		// Remove it from undo collection
-		undoStack.removeElementAt(getUndoSize() - 1);
-		
-		return lastUndoable;
+		if (getUndoSize() > 0) {
+			return undoStack.pop();
+		}
+		else {
+			return null;
+		}
 	}
 
 	/**
@@ -152,23 +157,23 @@ public class UndoManager {
 	 */
 	public Undoable popRedo() {
 		// Get the last element - throw NoSuchElementException if there is none
-		Undoable lastUndoable = peekRedo();
-
-		// Remove it from undo collection
-		redoStack.removeElementAt(getRedoSize() - 1);
-
-		return lastUndoable;
-	}
-
-	public void clearUndos() {
-		clearStack(undoStack);
-	}
-
-	public void clearRedos() {
-		clearStack(redoStack);
+		// Remove it from redo collection
+		if (getRedoSize() > 0) {
+			return redoStack.pop();
+		}
+		else {
+			return null;
+		}
 	}
 	
-	protected void clearStack(Vector<Undoable> clearStack) {
-		clearStack.removeAllElements();
+	//Clears Undo Stack
+	public void clearUndos() {
+		undoStack.clear();
 	}
+	// Clears Redo stack
+	public void clearRedos() {
+		redoStack.clear();
+	}
+	
+
 }
