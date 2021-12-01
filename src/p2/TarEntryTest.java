@@ -142,14 +142,14 @@ public class TarEntryTest {
 	public void testSetModTimeLong() {
 		TarEntry test = new TarEntry("test");
 		test.setModTime(5000);
-		assertEquals(5, test.header.modTime);
+		assertEquals(5, test.header.getModTime());
 	}
 
 	@Test
 	public void testSetModTimeDate() {
 		TarEntry test = new TarEntry("test");
 		test.setModTime(5);
-		assertEquals(0, test.header.modTime);
+		assertEquals(0, test.header.getModTime());
 	}
 
 
@@ -188,7 +188,7 @@ public class TarEntryTest {
 	public void testIsDirectory() {
 		TarEntry test = new TarEntry("Output.txt");
 		StringBuffer names = new StringBuffer("test/");
-		test.header.name = names;
+		test.header.setName(names);
 		assertTrue(test.isDirectory());
 	}
 
@@ -236,6 +236,6 @@ public class TarEntryTest {
 		TarEntry test = new TarEntry("test");
 		StringBuffer name = new StringBuffer("new");
 		test.nameTarHeader(test.header, "new");
-		assertEquals(0, test.header.groupId);
+		assertEquals(0, test.header.getGroupId());
 	}
 }

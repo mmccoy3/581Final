@@ -15,6 +15,9 @@
 
 package p2;
 
+import java.io.File;
+import java.util.Date;
+
 /**
  * This class encapsulates the Tar Entry Header used in Tar Archives.
  * The class also holds a number of tar constants, used mostly in headers.
@@ -26,23 +29,23 @@ TarHeader extends Object
 	/**
 	 * The length of the name field in a header buffer.
 	 */
-	public static final int		NAMELEN = 100;
+	public static final int		NAMELENGTH = 100;
 	/**
 	 * The length of the mode field in a header buffer.
 	 */
-	public static final int		MODELEN = 8;
+	public static final int		MODELENGTH = 8;
 	/**
 	 * The length of the user id field in a header buffer.
 	 */
-	public static final int		UIDLEN = 8;
+	public static final int		USERIDLENGTH = 8;
 	/**
 	 * The length of the group id field in a header buffer.
 	 */
-	public static final int		GIDLEN = 8;
+	public static final int		GROUPIDLENGTH = 8;
 	/**
 	 * The length of the checksum field in a header buffer.
 	 */
-	public static final int		CHKSUMLEN = 8;
+	public static final int		CHECKSUMLENGTH = 8;
 	/**
 	 * The length of the size field in a header buffer.
 	 */
@@ -58,15 +61,15 @@ TarHeader extends Object
 	/**
 	 * The length of the user name field in a header buffer.
 	 */
-	public static final int		UNAMELEN = 32;
+	public static final int		USERNAMELENGTH = 32;
 	/**
 	 * The length of the group name field in a header buffer.
 	 */
-	public static final int		GNAMELEN = 32;
+	public static final int		GROUPNAMELENGTH = 32;
 	/**
 	 * The length of the devices field in a header buffer.
 	 */
-	public static final int		DEVLEN = 8;
+	public static final int		DEVICELENGTH = 8;
 
 	/**
 	 * LF_ constants represent the "link flag" of an entry, or more commonly,
@@ -119,59 +122,59 @@ TarHeader extends Object
 	/**
 	 * The entry's name.
 	 */
-	public StringBuffer		name;
+	private StringBuffer		name;
 	/**
 	 * The entry's permission mode.
 	 */
-	public int				mode;
+	private int				mode;
 	/**
 	 * The entry's user id.
 	 */
-	public int				userId;
+	private int				userId;
 	/**
 	 * The entry's group id.
 	 */
-	public int				groupId;
+	private int				groupId;
 	/**
 	 * The entry's size.
 	 */
-	public long				size;
+	private long				size;
 	/**
 	 * The entry's modification time.
 	 */
-	public long				modTime;
+	private long				modTime;
 	/**
 	 * The entry's checksum.
 	 */
-	public int				checkSum;
+	private int				checkSum;
 	/**
 	 * The entry's link flag.
 	 */
-	public byte				linkFlag;
+	private byte				linkFlag;
 	/**
 	 * The entry's link name.
 	 */
-	public StringBuffer		linkName;
+	private StringBuffer		linkName;
 	/**
 	 * The entry's magic tag.
 	 */
-	public StringBuffer		magic;
+	private StringBuffer		magic;
 	/**
 	 * The entry's user name.
 	 */
-	public StringBuffer		userName;
+	private StringBuffer		userName;
 	/**
 	 * The entry's group name.
 	 */
-	public StringBuffer		groupName;
+	private StringBuffer		groupName;
 	/**
 	 * The entry's major device number.
 	 */
-	public int				devMajor;
+	private int				devMajor;
 	/**
 	 * The entry's minor device number.
 	 */
-	public int				devMinor;
+	private int				devMinor;
 
 
 	public
@@ -241,14 +244,16 @@ TarHeader extends Object
 	/**
 	 * Get the name of this entry.
 	 *
-	 * @return Teh entry's name.
+	 * @return The entry's name.
 	 */
-	public String
-	getName()
+	public String getName()
 		{
 		return this.name.toString();
 		}
-
+	
+	public void setName(StringBuffer name) {
+		this.name = name;
+	}
 	/**
 	 * Parse an octal string from a header buffer. This is used for the
 	 * file permission mode value.
@@ -418,5 +423,150 @@ TarHeader extends Object
 		return offset + length;
 		}
 
+	/**
+	 * Parse an entry's TarHeader information from a header buffer.
+	 * @param header  The tar entry header buffer to get information from.
+	 */
+	public void parseTarHeader(byte[] header) throws InvalidHeaderException {
+		int offset = 0;
+		this.name = TarHeader.parseName(header, offset, TarHeader.NAMELENGTH);
+		offset += TarHeader.NAMELENGTH;
+		this.mode = (int) TarHeader.parseOctal(header, offset, TarHeader.MODELENGTH);
+		offset += TarHeader.MODELENGTH;
+		this.userId = (int) TarHeader.parseOctal(header, offset, TarHeader.USERIDLENGTH);
+		offset += TarHeader.USERIDLENGTH;
+		this.groupId = (int) TarHeader.parseOctal(header, offset, TarHeader.GROUPIDLENGTH);
+		offset += TarHeader.GROUPIDLENGTH;
+		this.size = TarHeader.parseOctal(header, offset, TarHeader.SIZELEN);
+		offset += TarHeader.SIZELEN;
+		this.modTime = TarHeader.parseOctal(header, offset, TarHeader.MODTIMELEN);
+		offset += TarHeader.MODTIMELEN;
+		this.checkSum = (int) TarHeader.parseOctal(header, offset, TarHeader.CHECKSUMLENGTH);
+		offset += TarHeader.CHECKSUMLENGTH;
+		this.linkFlag = header[offset++];
+		this.linkName = TarHeader.parseName(header, offset, TarHeader.NAMELENGTH);
+		offset += TarHeader.NAMELENGTH;
+		this.magic = TarHeader.parseName(header, offset, TarHeader.MAGICLEN);
+		offset += TarHeader.MAGICLEN;
+		this.userName = TarHeader.parseName(header, offset, TarHeader.USERNAMELENGTH);
+		offset += TarHeader.USERNAMELENGTH;
+		this.groupName = TarHeader.parseName(header, offset, TarHeader.GROUPNAMELENGTH);
+		offset += TarHeader.GROUPNAMELENGTH;
+		this.devMajor = (int) TarHeader.parseOctal(header, offset, TarHeader.DEVICELENGTH);
+		offset += TarHeader.DEVICELENGTH;
+		this.devMinor = (int) TarHeader.parseOctal(header, offset, TarHeader.DEVICELENGTH);
 	}
- 
+
+	/**
+	 * Fill in a TarHeader given only the entry's name.
+	 * @param name  The tar entry name.
+	 */
+	public void nameTarHeader(String name) {
+		boolean isDir = name.endsWith("/");
+		this.checkSum = 0;
+		this.devMajor = 0;
+		this.devMinor = 0;
+		this.name = new StringBuffer(name);
+		this.mode = isDir ? 040755 : 0100644;
+		this.userId = 0;
+		this.groupId = 0;
+		this.size = 0;
+		this.checkSum = 0;
+		this.modTime = new Date().getTime() / 1000;
+		this.linkFlag = isDir ? TarHeader.LF_DIR : TarHeader.LF_NORMAL;
+		this.linkName = new StringBuffer("");
+		this.userName = new StringBuffer("");
+		this.groupName = new StringBuffer("");
+		this.devMajor = 0;
+		this.devMinor = 0;
+	}
+
+	/**
+	 * Write an entry's header information to a header buffer.
+	 * @param outbuf  The tar entry header buffer to fill in.
+	 * @param tarEntry
+	 */
+	public void writeEntryHeader(byte[] outbuf, TarEntry tarEntry) {
+		int offset = 0;
+		offset = TarHeader.getNameBytes(this.name, outbuf, offset, TarHeader.NAMELENGTH);
+		offset = TarHeader.getOctalBytes(this.mode, outbuf, offset, TarHeader.MODELENGTH);
+		offset = TarHeader.getOctalBytes(this.userId, outbuf, offset, TarHeader.USERIDLENGTH);
+		offset = TarHeader.getOctalBytes(this.groupId, outbuf, offset, TarHeader.GROUPIDLENGTH);
+		long size = this.size;
+		offset = TarHeader.getLongOctalBytes(size, outbuf, offset, TarHeader.SIZELEN);
+		offset = TarHeader.getLongOctalBytes(this.modTime, outbuf, offset, TarHeader.MODTIMELEN);
+		int csOffset = offset;
+		for (int c = 0; c < TarHeader.CHECKSUMLENGTH; ++c)
+			outbuf[offset++] = (byte) ' ';
+		outbuf[offset++] = this.linkFlag;
+		offset = TarHeader.getNameBytes(this.linkName, outbuf, offset, TarHeader.NAMELENGTH);
+		offset = TarHeader.getNameBytes(this.magic, outbuf, offset, TarHeader.MAGICLEN);
+		offset = TarHeader.getNameBytes(this.userName, outbuf, offset, TarHeader.USERNAMELENGTH);
+		offset = TarHeader.getNameBytes(this.groupName, outbuf, offset, TarHeader.GROUPNAMELENGTH);
+		offset = TarHeader.getOctalBytes(this.devMajor, outbuf, offset, TarHeader.DEVICELENGTH);
+		offset = TarHeader.getOctalBytes(this.devMinor, outbuf, offset, TarHeader.DEVICELENGTH);
+		for (; offset < outbuf.length;)
+			outbuf[offset++] = 0;
+		long checkSum = tarEntry.computeCheckSum(outbuf);
+		TarHeader.getCheckSumOctalBytes(checkSum, outbuf, csOffset, TarHeader.CHECKSUMLENGTH);
+	}
+
+	public void initializeHeader(File file, String name) {
+		this.linkName = new StringBuffer("");
+		this.name = new StringBuffer(name);
+		if (file.isDirectory()) {
+			this.mode = 040755;
+			this.linkFlag = TarHeader.LF_DIR;
+			if (this.name.charAt(this.name.length() - 1) != '/')
+				this.name.append("/");
+		} else {
+			this.mode = 0100644;
+			this.linkFlag = TarHeader.LF_NORMAL;
+		}
+		this.size = file.length();
+		this.modTime = file.lastModified() / 1000;
+		this.checkSum = 0;
+		this.devMajor = 0;
+		this.devMinor = 0;
+	}
+
+	public void setUserId(int id) {
+		this.userId = id;
+	}
+	public int getUserId() {
+		return this.userId;
+	}
+	public void setGroupId(int id) {
+		this.groupId = id;
+	}
+	public int getGroupId() {
+		return this.groupId;
+	}
+	public void setSize(long size) {
+		this.size = size;
+	}
+	public long getSize() {
+		return this.size;
+	}
+	public void setModTime(long time) {
+		this.modTime = time;
+	}
+	public long getModTime() {
+		return this.modTime;
+	}
+	public byte getLinkFlag() {
+		return this.linkFlag;
+	}
+	public void setUserName(StringBuffer name) {
+		this.userName = name;
+	}
+	public String getUserName() {
+		return this.userName.toString();
+	}
+	public void setGroupName(StringBuffer name) {
+		this.groupName = name;
+	}
+	public String getGroupName() {
+		return this.groupName.toString();
+	}
+}
