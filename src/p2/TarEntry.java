@@ -320,7 +320,7 @@ class		TarEntry
 	 * @param size This entry's new file size.
 	 */
 	public void setSize( long size ){
-		this.header.setSize(size);;
+		this.header.setSize(size);
 	}
 
 	/**

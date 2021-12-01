@@ -23,8 +23,7 @@ import java.util.Date;
  * The class also holds a number of tar constants, used mostly in headers.
  */
 
-public class
-TarHeader extends Object
+public class TarHeader
 	{
 	/**
 	 * The length of the name field in a header buffer.
