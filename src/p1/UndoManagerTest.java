@@ -4,9 +4,6 @@ import static org.junit.Assert.*;
 //import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
-
-import java.util.Vector;
-
 import org.junit.Test;
 
 import CH.ifa.draw.util.Undoable;
