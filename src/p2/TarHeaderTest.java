@@ -14,10 +14,26 @@ public class TarHeaderTest {
 	public void testParseOctal() throws InvalidHeaderException {
 		TarHeader test = new TarHeader();
 		byte[] bytes = new byte[5000];
+		for(int i = 10; i < bytes.length; i+=10) {
+			bytes[i] = 1;
+		}
 		int offset = 10;
 		int length = 50;
-		assertEquals(0, test.parseOctal(bytes, offset, length));
+		assertEquals(-47, test.parseOctal(bytes, offset, length));
 	}
+	
+	@Test
+	public void testGetOctalBytes() {
+		TarHeader test = new TarHeader();
+		byte[] bytes = new byte[5000];
+		for(int i = 10; i < bytes.length; i+=10) {
+			bytes[i] = 1;
+		}
+		int offset = 10;
+		int length = 50;
+		assertEquals(60, test.getOctalBytes(20, bytes, offset, length));
+	}
+
 	/*
 	@Test
 	void testParseName() {
@@ -29,10 +45,6 @@ public class TarHeaderTest {
 		fail("Not yet implemented");
 	}
 
-	@Test
-	void testGetOctalBytes() {
-		fail("Not yet implemented");
-	}
 
 	@Test
 	void testGetLongOctalBytes() {
@@ -59,7 +71,15 @@ public class TarHeaderTest {
 		verify(header, atLeastOnce()).initializeHeader(test, name);
 	}
 	*/
-	
+	@Test
+	public void testNameTarHeader() {
+		TarHeader test = new TarHeader();
+		test.setcheckSum(50);
+		assertEquals(50, test.getCheckSum());
+		test.nameTarHeader("Miranda");
+		assertEquals("Miranda", test.getName());
+		assertEquals(0, test.getCheckSum());
+	}
 	
 	
 	@Test
