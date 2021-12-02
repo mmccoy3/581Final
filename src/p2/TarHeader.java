@@ -311,6 +311,7 @@ public class TarHeader
 	 * @return The integer value of the octal bytes.
 	 */
 	public static int getOctalBytes( long value, byte[] buf, int offset, int length ){
+		byte[] result = buf;
 		int idx = length - 1;	
 		buf[ offset + idx ] = 0;
 		--idx;
@@ -321,11 +322,11 @@ public class TarHeader
 			buf[ offset + idx ] = (byte) '0';
 			--idx;
 		} else {
-			buf = fillArray(buf, idx, value, offset);
+			result = fillArray(buf, idx, value, offset);
 		}
 
 		for ( ; idx >= 0 ; --idx ) {
-			buf[ offset + idx ] = (byte) ' ';
+			result[ offset + idx ] = (byte) ' ';
 		}
 
 		return offset + length;
