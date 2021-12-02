@@ -15,6 +15,8 @@
 
 package p2;
 
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+
 import java.io.File;
 import java.util.Date;
 
@@ -184,8 +186,7 @@ public class TarHeader
 		this.name = new StringBuffer();
 		this.linkName = new StringBuffer();
 
-		String user =
-			System.getProperty( "user.name", "" );
+		String user = System.getProperty( "user.name", "" );
 
 		if ( user.length() > 31 )
 			user = user.substring( 0, 31 );
@@ -262,37 +263,29 @@ public class TarHeader
 	 * @param length The number of header bytes to parse.
 	 * @return The long value of the octal string.
 	 */
-	public static long
-	parseOctal( byte[] header, int offset, int length )
-		throws InvalidHeaderException
-		{
+	public static long parseOctal( byte[] header, int offset, int length )throws InvalidHeaderException {
 		long result = 0;
 		boolean stillPadding = true;
 
 		int end = offset + length;
-		for ( int i = offset ; i < end ; ++i )
-			{
-			if ( header[i] == 0 )
+		for ( int i = offset ; i < end ; ++i ){
+			if ( header[i] == 0 ) 
 				break;
 
-			if ( header[i] == (byte) ' ' || header[i] == '0' )
-				{
+			if ( header[i] == (byte) ' ' || header[i] == '0' ){
 				if ( stillPadding )
 					continue;
 
 				if ( header[i] == (byte) ' ' )
 					break;
-				}
-			
+			}		
 			stillPadding = false;
 
-			result =
-				(result << 3)
-					+ (header[i] - '0');
-			}
+			result = (result << 3) + (header[i] - '0');
+		}
 
 		return result;
-		}
+	}
 
 	/**
 	 * Parse an entry name from a header buffer.
@@ -332,15 +325,13 @@ public class TarHeader
 		{
 		int i;
 
-		for ( i = 0 ; i < length && i < name.length() ; ++i )
-			{
+		for ( i = 0 ; i < length && i < name.length() ; ++i )	{
 			buf[ offset + i ] = (byte) name.charAt( i );
-			}
+		}
 
-		for ( ; i < length ; ++i )
-			{
+		for ( ; i < length ; ++i )	{
 			buf[ offset + i ] = 0;
-			}
+		}
 
 		return offset + length;
 		}
@@ -555,6 +546,10 @@ public class TarHeader
 	}
 	public byte getLinkFlag() {
 		return this.linkFlag;
+		
+	}
+	public void setLinkFlag(byte flag) {
+		this.linkFlag = flag;
 	}
 	public void setUserName(StringBuffer name) {
 		this.userName = name;
@@ -567,5 +562,44 @@ public class TarHeader
 	}
 	public String getGroupName() {
 		return this.groupName.toString();
+	}
+	
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+	public int getMode() {
+		return this.mode;
+	}
+	public void setcheckSum(int mode) {
+		this.checkSum = mode;
+	}
+	public int getCheckSum() {
+		return this.checkSum;
+	}
+	public String getLinkName() {
+		return this.linkName.toString();
+	}
+	public void setLinkName(StringBuffer name) {
+		this.linkName = name;
+	}
+	
+	public String getMagic() {
+		return this.magic.toString();
+	}
+	public void setMagic(StringBuffer name) {
+		this.magic= name;
+	}
+	
+	public int getDevMajor() {
+		return this.devMajor;
+	}
+	public void setDevMajor(int dev) {
+		this.devMajor = dev;
+	}
+	public int getDevMinor() {
+		return this.devMinor;
+	}
+	public void setDevMinor(int dev) {
+		this.devMinor = dev;
 	}
 }
