@@ -101,11 +101,8 @@ public class Jar {
 		ArrayList<Resource> files = new ArrayList<Resource>();
 		Resource[] n = new Resource[3];
 		for (Resource r : n) {
-			if (r.isExists()) {
-				if (r.isDirectory()) {
-				} else {
-					files.add(r);
-				}
+			if (r.isExists() && !r.isDirectory()) {
+				files.add(r);
 			}
 		}
 		return files;
@@ -115,10 +112,8 @@ public class Jar {
 		ArrayList<Resource> dirs = new ArrayList<Resource>();
 		Resource[] n = new Resource[3];
 		for (Resource r : n) {
-			if (r.isExists()) {
-				if (r.isDirectory()) {
-					dirs.add(r);
-				} 
+			if (r.isExists() && r.isDirectory()) {				
+				dirs.add(r);				
 			}
 		}
 		return dirs;
@@ -155,10 +150,9 @@ public class Jar {
     }
 	private boolean skipEmptyNames() {
 		boolean skipEmptyNames = true;
-		if (true) {
 			ZipFileSet zfs = new ZipFileSet();
 			skipEmptyNames = zfs.getPrefix(getProject()).equals("") && zfs.getFullpath(getProject()).equals("");
-		}
+		
 		return skipEmptyNames;
 	}
 }

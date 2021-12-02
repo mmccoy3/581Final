@@ -34,43 +34,7 @@ public class TarHeaderTest {
 		assertEquals(60, test.getOctalBytes(20, bytes, offset, length));
 	}
 
-	/*
-	@Test
-	void testParseName() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testGetNameBytes() {
-		fail("Not yet implemented");
-	}
-
-
-	@Test
-	void testGetLongOctalBytes() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testGetCheckSumOctalBytes() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	void testParseTarHeader() {
-		fail("Not yet implemented");
-	}
-
 	
-	@Test
-	void testInitializeHeader() {
-		File test = new File("Output.txt");
-		String name = "testingName";
-		TarHeader header = mock(TarHeader.class);
-		header.initializeHeader(test, name);
-		verify(header, atLeastOnce()).initializeHeader(test, name);
-	}
-	*/
 	@Test
 	public void testNameTarHeader() {
 		TarHeader test = new TarHeader();
